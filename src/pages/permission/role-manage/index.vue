@@ -1,138 +1,121 @@
 <template lang="html">
-  <el-card class="box-card">
-    <div class="search-bar">
-      <el-form :inline="true" :model="searchData" class="fl">
-        <el-input style="display: none;"></el-input>
-        <el-form-item label="角色名称">
-          <el-input v-model="searchData.roleName" placeholder="角色名称" @keyup.enter.native="onSearch()"></el-input>
-        </el-form-item>
-      </el-form>
-      <div class="fl">
-        <el-button type="text" @click="handleReset">重置</el-button>
-        <el-button type="primary" icon="el-icon-search" @click="onSearch">查询</el-button>
-      </div>
-    </div>
-    <div  class="tools-bar">
-      <el-button  type="success" icon="el-icon-plus" size="small" @click="dialogFormVisible = true;">新增角色</el-button>
-    </div>
-    <div>
-      <el-table
-        ref="singleTable"
-        :data="tableData"
-        border
-        highlight-current-row
-        style="width: 100%">
-        <el-table-column
-          type="index"
-          width="60">
-        </el-table-column>
-        <el-table-column
+    <el-card class="box-card">
+        <div class="search-bar">
+            <el-form :inline="true" :model="searchData" class="fl">
+                <el-input style="display: none;"></el-input>
+                <el-form-item label="角色名称">
+                    <el-input v-model="searchData.roleName" placeholder="角色名称" @keyup.enter.native="onSearch()"></el-input>
+                </el-form-item>
+            </el-form>
+            <div class="fl">
+                <el-button type="text" @click="handleReset">重置</el-button>
+                <el-button type="primary" icon="el-icon-search" @click="onSearch">查询</el-button>
+            </div>
+        </div>
+        <div class="tools-bar">
+            <el-button type="success" icon="el-icon-plus" size="small" @click="dialogFormVisible = true;">新增角色</el-button>
+        </div>
+        <div>
+            <el-table ref="singleTable" :data="tableData" border highlight-current-row style="width: 100%">
+                <el-table-column type="index" width="60">
+                </el-table-column>
+                <el-table-column prop="description" label="角色名" width="120">
+                </el-table-column>
+                <!-- <el-table-column
           prop="roleName"
           label="角色名"
           width="120">
-        </el-table-column>
-        <el-table-column
-          label="操作权限"
-          prop="erpMemberPermissions"
-          :formatter="permListFormatter">
-        </el-table-column>
-        <el-table-column
-          label="操作"
-          fixed="right"
-          width="180">
-          <template slot-scope="scope">
-            <el-button type="text" size="small" @click="handleEditRoleName(scope.$index, scope.row)">修改角色名</el-button>
-            <el-button  type="text" size="small" @click="handlePower(scope.$index, scope.row)">授权</el-button>
-            <el-button  type="text" size="small" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-      <div class="pagination-bar">
-        <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :page-sizes="[10, 25, 50, 100]"
-          :page-size="pageSize"
-          :current-page.sync="pageNumber"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="totalRecord">
-        </el-pagination>
-      </div>
-    </div>
-    <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" @close="onDialogClose()" width="80%">
-      <el-form ref="roleForm" :rules="rules" :model="roleForm" label-width="120px">
-        <el-form-item v-if="dialogTitle !== '角色授权'" label="角色名称" prop="roleName">
-          <el-input v-model="roleForm.roleName"></el-input>
-        </el-form-item>
-
-        <el-form-item v-if="dialogTitle !== '角色授权'" label="角色代码" label-width="120px">
-            <el-input v-model="roleForm.roleCode" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item v-if="dialogTitle !== '角色授权'" label="状态" label-width="120px">
-            <el-select v-model="roleForm.status" placeholder="请选择状态">
-                <el-option label="停用" value='0'></el-option>
-                <el-option label="启用" value='1'></el-option>
-            </el-select>
-        </el-form-item>
-
-        <el-form-item v-if="dialogTitle=='新增角色并授权' || dialogTitle=='角色授权'" label="权限">
-          <el-tabs type="border-card">
-            <template v-for="(role, key) in roleTree">
-  <el-tab-pane :key="key" :label="role.permissionName">
-    <el-tree
-      :data="role.erpMemberPermissions"
-      show-checkbox
-      default-expand-all
-      node-key="id"
-      ref="tree"
-      highlight-current
-      :props="defaultTreeProps"
-    >
-    </el-tree>
-  </el-tab-pane>
-</template>
-          </el-tabs>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="info" @click="onEditSubmit()" v-if="dialogTitle=='修改角色名称'">保存</el-button>
-        <el-button type="info" @click="onEditRoleSubmit" v-if="dialogTitle=='角色授权'">保存</el-button>
-        <el-button type="primary" @click="onAddSubmit" v-if="dialogTitle=='新增角色并授权'">立即创建</el-button>
-      </div>
-    </el-dialog>
-
-    <el-dialog title="新增角色" :visible.sync="dialogFormVisible">
-        <el-form :model="form">
-            <el-form-item label="名称" label-width="120px">
-                <el-input v-model="form.roleName" autocomplete="off"></el-input>
-            </el-form-item>
-            <el-form-item label="角色代码" label-width="120px">
-                <el-input v-model="form.roleCode" autocomplete="off"></el-input>
-            </el-form-item>
-            <el-form-item label="状态" label-width="120px">
-                <el-select v-model="form.status" placeholder="请选择状态">
-                    <el-option label="停用" value="0"></el-option>
-                    <el-option label="启用" value="1"></el-option>
-                </el-select>
-            </el-form-item>
-        </el-form>
-        <div slot="footer" class="dialog-footer">
-            <el-button @click="dialogFormVisible = false">取 消</el-button>
-            <el-button type="primary" @click="doAdd()">确 定</el-button>
+        </el-table-column> -->
+                    <el-table-column prop="pmsDescribe" label="操作权限">
+                </el-table-column>
+                <!-- <el-table-column label="操作权限" prop="erpMemberPermissions"
+                    :formatter="permListFormatter"></el-table-column> -->
+                <el-table-column label="操作" fixed="right" width="180">
+                    <template slot-scope="scope">
+                        <el-button type="text" size="small"
+                            @click="handleEditRoleName(scope.$index, scope.row)">修改角色名</el-button>
+                        <el-button type="text" size="small" @click="handlePower(scope.$index, scope.row)">授权</el-button>
+                        <el-button type="text" size="small" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <div class="pagination-bar">
+                <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                    :page-sizes="[10, 25, 50, 100]" :page-size="pageSize" :current-page.sync="pageNumber"
+                    layout="total, sizes, prev, pager, next, jumper" :total="totalRecord">
+                </el-pagination>
+            </div>
         </div>
-    </el-dialog>
+        <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" @close="onDialogClose()" width="80%">
+            <el-form ref="roleForm" :rules="rules" :model="roleForm" label-width="120px">
+                <el-form-item v-if="dialogTitle !== '角色授权'" label="角色名称" prop="roleName">
+                    <el-input v-model="roleForm.roleName"></el-input>
+                </el-form-item>
 
-  </el-card>
+                <el-form-item v-if="dialogTitle !== '角色授权'" label="角色代码" label-width="120px">
+                    <el-input v-model="roleForm.roleCode" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item v-if="dialogTitle !== '角色授权'" label="状态" label-width="120px">
+                    <el-select v-model="roleForm.status" placeholder="请选择状态">
+                        <el-option label="停用" value='0'></el-option>
+                        <el-option label="启用" value='1'></el-option>
+                    </el-select>
+                </el-form-item>
+
+                <el-form-item v-if="dialogTitle == '新增角色并授权' || dialogTitle == '角色授权'" label="权限">
+                    <el-tabs type="border-card">
+                        <template v-for="(role, key) in roleTree">
+                            <!-- <el-tab-pane :key="key" :label="role.permissionName"> -->
+                            <el-tab-pane :key="key" :label="role.pmsDescribe">
+                                <el-tree :data="role.erpMemberPermissions" show-checkbox default-expand-all node-key="id"
+                                    ref="tree" highlight-current :props="defaultTreeProps">
+                                </el-tree>
+                            </el-tab-pane>
+                        </template>
+                    </el-tabs>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="dialogVisible = false">取 消</el-button>
+                <el-button type="info" @click="onEditSubmit()" v-if="dialogTitle == '修改角色名称'">保存</el-button>
+                <el-button type="info" @click="onEditRoleSubmit" v-if="dialogTitle == '角色授权'">保存</el-button>
+                <el-button type="primary" @click="onAddSubmit" v-if="dialogTitle == '新增角色并授权'">立即创建</el-button>
+            </div>
+        </el-dialog>
+
+        <el-dialog title="新增角色" :visible.sync="dialogFormVisible">
+            <el-form :model="form">
+                <el-form-item label="名称" label-width="120px">
+                    <el-input v-model="form.roleName" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="角色代码" label-width="120px">
+                    <el-input v-model="form.roleCode" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="状态" label-width="120px">
+                    <el-select v-model="form.status" placeholder="请选择状态">
+                        <el-option label="停用" value="0"></el-option>
+                        <el-option label="启用" value="1"></el-option>
+                    </el-select>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="dialogFormVisible = false">取 消</el-button>
+                <el-button type="primary" @click="doAdd()">确 定</el-button>
+            </div>
+        </el-dialog>
+    </el-card>
 </template>
 
 <script>
-import { getRoleList, getAllPermissiion } from '@/api/permission'
+// getAllPermissiion
+import { getRoleList } from '@/api/permission'
 export default {
     data() {
         return {
             form: {
                 roleName: '',
+                description: '',
+                pmsDescribe: '',
                 status: '',
                 roleCode: ''
             },
@@ -145,7 +128,8 @@ export default {
             dialogTitle: '新增角色并授权',
             defaultTreeProps: {
                 children: 'erpMemberPermissions',
-                label: 'permissionName'
+                // label: 'permissionName'
+                label: 'pmsDescribe'
             },
             rules: {
                 roleName: [
@@ -248,26 +232,32 @@ export default {
                     fn()
                 }
             } else if (roles.erpMemberPermissions) {
-                roles.erpMemberPermissions.map(role => {
+                roles.erpMemberPermissions.map((role) => {
                     this.isLeafByRoleId(role, id, fn)
                 })
             }
         },
         loadData() {
-            getAllPermissiion().then(res => {
-                this.roleTree = res
-                this.roleTree.forEach((item, index) => {
-                    if (item.erpMemberPermissions) {
-                        item.erpMemberPermissions.forEach(
-                            (items, indexs) => {
-                                if (item.erpMemberPermissions[indexs] && item.erpMemberPermissions[indexs].erpMemberPermissions && item.erpMemberPermissions[indexs].erpMemberPermissions.length === 0) {
-                                    this.roleTree[index].erpMemberPermissions[indexs].judge = true
-                                }
-                            }
-                        )
-                    }
-                })
-            })
+            // getAllPermissiion().then((res) => {
+            //     this.roleTree = res
+            //     this.roleTree.forEach((item, index) => {
+            //         if (item.erpMemberPermissions) {
+            //             item.erpMemberPermissions.forEach((items, indexs) => {
+            //                 if (
+            //                     item.erpMemberPermissions[indexs] &&
+            //                     item.erpMemberPermissions[indexs]
+            //                         .erpMemberPermissions &&
+            //                     item.erpMemberPermissions[indexs]
+            //                         .erpMemberPermissions.length === 0
+            //                 ) {
+            //                     this.roleTree[index].erpMemberPermissions[
+            //                         indexs
+            //                     ].judge = true
+            //                 }
+            //             })
+            //         }
+            //     })
+            // })
         },
         onDialogClose() {
             //   this.$refs.roleForm.resetFields();
@@ -291,15 +281,15 @@ export default {
             this.onSearch()
         },
         onSearch({ pageNumber = 1 } = {}) {
-            getRoleList()
-                .then(res => {
-                    this.tableData = res || []
-                })
+            getRoleList().then((res) => {
+                this.tableData = res || []
+            })
         },
         permListFormatter(row, column, cellValue) {
             let str = []
             for (let item of cellValue) {
-                str.push(item.permissionName)
+                // str.push(item.permissionName)
+                str.push(item.pmsDescribe)
             }
             return str.join('，')
         },
@@ -308,7 +298,7 @@ export default {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning'
-            }).then(() => {})
+            }).then(() => { })
         },
         handlePower(index, row) {
             this.dialogSize = 'large'
@@ -330,7 +320,7 @@ export default {
                 []
             ]
             this.roleForm.id = row.id
-            row.erpMemberPermissions.map(role => {
+            row.erpMemberPermissions.map((role) => {
                 let id, rootRoleId, treeIndex
                 if (this.isLeaf(role.id)) {
                     id = role.id
@@ -361,7 +351,7 @@ export default {
         onAddSubmit() {
             this.getPermissions()
             let permissions = this.roleForm.permissions
-            this.$refs.roleForm.validate(valid => {
+            this.$refs.roleForm.validate((valid) => {
                 if (valid) {
                     if (!permissions) {
                         this.$message({
@@ -375,7 +365,7 @@ export default {
             })
         },
         onEditSubmit() {
-            this.$refs.roleForm.validate(valid => {
+            this.$refs.roleForm.validate((valid) => {
                 if (valid) {
                     var formData = new URLSearchParams()
                     formData.append('roleName', this.roleForm.roleName)
@@ -388,7 +378,7 @@ export default {
         onEditRoleSubmit() {
             this.getPermissions()
             let permissions = this.roleForm.permissions
-            this.$refs.roleForm.validate(valid => {
+            this.$refs.roleForm.validate((valid) => {
                 if (valid) {
                     if (!permissions) {
                         this.$message({
@@ -399,7 +389,7 @@ export default {
                         return
                     }
                     var formData = new URLSearchParams()
-                    this.roleForm.permissions.split(',').forEach(element => {
+                    this.roleForm.permissions.split(',').forEach((element) => {
                         formData.append('permissionIds', element)
                     })
                 }
@@ -417,9 +407,9 @@ export default {
                 }
                 // 对半选中状态的节点进行处理
                 let nodesDOM = tree.$el.querySelectorAll('.el-tree-node')
-                let nodesVue = [].map.call(nodesDOM, node => node.__vue__)
+                let nodesVue = [].map.call(nodesDOM, (node) => node.__vue__)
                 for (let node of nodesVue.filter(
-                    item => item.indeterminate === true
+                    (item) => item.indeterminate === true
                 )) {
                     let { id, parentId } = {
                         id: node.$options.propsData.node.data.id,
@@ -437,16 +427,19 @@ export default {
 </script>
 
 <style>
-.fr{
-    float:right;
+.fr {
+    float: right;
 }
-.fl{
-    float:left;
+
+.fl {
+    float: left;
 }
-.search-bar{
+
+.search-bar {
     overflow: hidden;
 }
-.tools-bar{
-    margin-bottom:20px;
+
+.tools-bar {
+    margin-bottom: 20px;
 }
 </style>

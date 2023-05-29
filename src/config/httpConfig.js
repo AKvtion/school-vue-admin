@@ -131,4 +131,61 @@ http.post = function(url, data, options) {
     })
 }
 
+http.put = function(url, data, options) {
+    let loading
+    if (!options || options.isShowLoading !== false) {
+        loading = document.getElementById('ajaxLoading')
+        loading.style.display = 'block'
+    }
+    return new Promise((resolve, reject) => {
+        instance
+            .post(url, data, options)
+            .then(response => {
+                if (!options || options.isShowLoading !== false) {
+                    loading = document.getElementById('ajaxLoading')
+                    loading.style.display = 'none'
+                }
+                if (response.code === 200) {
+                    resolve(response.data)
+                } else {
+                    Message.error({
+                        message: response.message
+                    })
+                    reject(response.message)
+                }
+            })
+            .catch(e => {
+                console.log(e)
+            })
+    })
+}
+
+http.del = function(url, data, options) {
+    let loading
+    if (!options || options.isShowLoading !== false) {
+        loading = document.getElementById('ajaxLoading')
+        loading.style.display = 'block'
+    }
+    return new Promise((resolve, reject) => {
+        instance
+            .delete(url, data, options)
+            .then(response => {
+                if (!options || options.isShowLoading !== false) {
+                    loading = document.getElementById('ajaxLoading')
+                    loading.style.display = 'none'
+                }
+                if (response.code === 200) {
+                    resolve(response.data)
+                } else {
+                    Message.error({
+                        message: response.message
+                    })
+                    reject(response.message)
+                }
+            })
+            .catch(e => {
+                console.log(e)
+            })
+    })
+}
 export default http

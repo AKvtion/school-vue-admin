@@ -6,6 +6,7 @@ import dynamicRouter from '@/router/dynamic-router'
 export default {
     namespaced: true,
     state: {
+        psl: null /** 保存所有的权限码 */,
         permissionList: null /** 所有路由 */,
         sidebarMenu: [] /** 导航菜单 */,
         currentMenu: '' /** 当前active导航菜单 */,
@@ -23,6 +24,9 @@ export default {
         },
         SET_PERMISSION(state, routes) {
             state.permissionList = routes
+        },
+        SET_PSL(state, psl) {
+            state.psl = psl
         },
         CLEAR_PERMISSION(state) {
             state.permissionList = null
@@ -45,6 +49,7 @@ export default {
             let permissionList = await fetchPermission()
             commit('SET_AVATAR', permissionList.avatar)
             commit('SET_ACCOUNT', permissionList.name)
+            commit('SET_PSL', permissionList.data)
             let routes = recursionRouter(permissionList.data, dynamicRouter)
             let MainContainer = DynamicRoutes.find(v => v.path === '')
             let children = MainContainer.children

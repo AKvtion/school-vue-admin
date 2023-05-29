@@ -1,3 +1,11 @@
+<!--
+ * @Descripttion: 越努力越幸运
+ * @version: 
+ * @Author: https://github.com/akvtion && ifauchard@163.com
+ * @Date: 2023-05-16 09:32:29
+ * @LastEditors: https://github.com/akvtion && ifauchard@163.com
+ * @LastEditTime: 2023-05-28 15:41:56
+-->
 <template lang="html">
   <el-card class="box-card">
     <div class="search-bar">
@@ -121,7 +129,7 @@
     <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" @close="onDialogClose()">
       <el-form ref="dataForm" :rules="rules" :model="dataForm" label-width="80px">
         <el-form-item label="登录名" prop="username">
-          <template v-if="dialogTitle=='修改用户信息'">{{dataForm.username}}</template>
+          <template v-if="dialogTitle=='修改用户信息'"> {{ dataForm.username }} </template>
           <el-input v-else v-model="dataForm.username" placeholder="登录名"></el-input>
         </el-form-item>
         <el-form-item label="用户角色" prop="roleIds">
@@ -135,7 +143,7 @@
           </el-select>
         </el-form-item>
           <el-form-item label="密码" prop="password">
-              <el-input v-model="dataForm.password" placeholder="真实姓名"></el-input>
+              <el-input v-model="dataForm.password" placeholder="密码"></el-input>
             </el-form-item>
             <el-form-item label="电子邮箱" prop="email">
               <el-input v-model="dataForm.email" placeholder="电子邮箱"></el-input>
@@ -277,7 +285,8 @@ export default {
     methods: {
         async initList() {
             const data = await getUserList()
-            this.tableData = data.pageDate.records
+            this.tableData = data
+            // console.log('data.erpMemberRoles :>> ', data.erpMemberRoles);
         },
         handleStatus(row) {},
         statusFormat(row, column, cellValue) {
@@ -310,7 +319,7 @@ export default {
             let result = []
             if (typeof row.erpMemberRoles === 'object' && row.erpMemberRoles.length > 0) {
                 for (let item of row.erpMemberRoles) {
-                    result.push(item.roleName)
+                    result.push(item.description)
                 }
             }
             return result.join('，')
