@@ -1,12 +1,11 @@
 <!--
  * @Descripttion: 越努力越幸运
- * @version: 0.1
+ * @version:0.1
  * @Author: https://github.com/akvtion && ifauchard@163.com
- * @Date: 2023-05-25 15:22:05
+ * @Date: 2023-05-16 09:32:29
  * @LastEditors: https://github.com/akvtion && ifauchard@163.com
- * @LastEditTime: 2023-06-04 11:14:57
+ * @LastEditTime: 2023-06-03 11:28:13
 -->
-
 <template>
     <div class="public">
         <!-- 查询、重置 -->
@@ -16,10 +15,10 @@
             class="demo-form-inline"
             size="small"
         >
-            <el-form-item label="班别">
+            <el-form-item label="用户">
                 <el-input
                     v-model="formInline.name"
-                    placeholder="请输入班别查询"
+                    placeholder="请输入用户名查询"
                 ></el-input>
             </el-form-item>
             <el-form-item>
@@ -43,24 +42,29 @@
                 </template>
             </el-table-column>
             <!-- <el-table-column prop="id" label="序号" align="center">
-            </el-table-column> -->
+          </el-table-column> -->
             <el-table-column
-                prop="name"
-                label="班别"
-                align="center"
-            >
+            prop="username"
+            label="用户名"
+            align="center">
             </el-table-column>
             <el-table-column
-                prop="grade"
+                prop="password"
                 width="200px"
-                label="年级"
+                label="密码"
                 align="center"
             >
             </el-table-column>
             <el-table-column
-                prop="major"
+              prop="roleList"
+              :formatter="roleFormatter"
+              min-width="210"
+              label="角色">
+            </el-table-column>
+            <el-table-column
+                prop="email"
                 width="250px"
-                label="专业"
+                label="电子邮箱"
                 align="center"
             >
             </el-table-column>
@@ -87,38 +91,36 @@
         </el-table>
         <!-- 弹窗 -->
         <el-dialog
-            :title="state ? '添加班级信息' : '修改班级信息'"
+            :title="state ? '添加用户信息' : '修改用户信息'"
             :visible.sync="dialogFormVisible"
             width="900px"
         >
             <el-form :model="form" :rules="rules" ref="form">
                 <el-form-item
-                    label="班别"
+                    label="用户"
                     :label-width="formLabelWidth"
-                    prop="name"
+                    prop="username"
+                >
+                    <el-input v-model="form.username" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item
+                    label="密码"
+                    :label-width="formLabelWidth"
+                    prop="password"
                 >
                     <el-input
-                        v-model="form.name"
+                        type="password"
+                        v-model="form.password"
                         autocomplete="off"
                     ></el-input>
                 </el-form-item>
                 <el-form-item
-                    label="年级"
+                    label="电子邮箱"
                     :label-width="formLabelWidth"
-                    prop="name"
+                    prop="email"
                 >
                     <el-input
-                        v-model="form.grade"
-                        autocomplete="off"
-                    ></el-input>
-                </el-form-item>
-                <el-form-item
-                    label="专业"
-                    :label-width="formLabelWidth"
-                    prop="name"
-                >
-                <el-input
-                        v-model="form.major"
+                        v-model="form.email"
                         autocomplete="off"
                     ></el-input>
                 </el-form-item>
@@ -145,9 +147,7 @@
     </div>
 </template>
 <script>
-import {
-    getClassList, addClassList, updateClassList, delClassList
-} from '@/api/class/classmanage.js'
+import { getUserList, addUser } from '@/api/permission'
 
 import modules from '@/store/modules'
 export default {
@@ -161,18 +161,19 @@ export default {
             total: 0, // 总条数
             form: {
                 id: '',
-                name: '',
-                grade: '',
-                major: ''
+                username: '',
+                password: '',
+                type: '',
+                email: ''
             },
             formInline: {
                 name: ''
             },
             formLabelWidth: '80px',
             rules: {
-                name: [{ required: true, message: '请输入班别' }],
-                grade: [{ required: true, message: '请输入年级' }],
-                major: [{ required: true, message: '请输入专业' }]
+                username: [{ required: true, message: '请输入用户' }],
+                password: [{ required: true, message: '请输入密码' }],
+                email: [{ required: true, message: '请输入邮箱' }]
             },
             state: true,
             dialogFormVisible: false
@@ -232,8 +233,8 @@ export default {
             console.log('state :>> ', modules.permission.state.psl)
             this.arr = modules.permission.state.psl
             console.log('arr :>> ', this.arr)
-            getClassList(params).then((res) => {
-                console.log('getClassList :>> ', res)
+            getUserList(params).then((res) => {
+                console.log('getUserList :>> ', res)
                 this.tableData = res.records
                 this.total = res.total
                 this.currentPage = res.current
@@ -248,8 +249,8 @@ export default {
             this.$refs[form].validate((valid) => {
                 if (valid) {
                     if (this.state) {
-                        addClassList(this.form).then((res) => {
-                            console.log('addClassList :>> ', res)
+                        addUser(this.form).then((res) => {
+                            console.log('addUser :>> ', res)
                             this.getData()
                             this.dialogFormVisible = false
                             this.$message({
@@ -259,14 +260,14 @@ export default {
                         })
                     } else {
                         console.log('this.updateClassListForm :>> ', this.form)
-                        updateClassList(this.form).then((res) => {
-                            this.getData()
-                            this.dialogFormVisible = false
-                            this.$message({
-                                message: '修改成功',
-                                type: 'success'
-                            })
-                        })
+                        // updateClassList(this.form).then((res) => {
+                        //     this.getData()
+                        //     this.dialogFormVisible = false
+                        //     this.$message({
+                        //         message: '修改成功',
+                        //         type: 'success'
+                        //     })
+                        // })
                     }
                 }
             })

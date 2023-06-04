@@ -4,14 +4,14 @@
  * @Author: https://github.com/akvtion && ifauchard@163.com
  * @Date: 2023-05-16 09:32:29
  * @LastEditors: https://github.com/akvtion && ifauchard@163.com
- * @LastEditTime: 2023-05-29 16:43:36
+ * @LastEditTime: 2023-05-29 17:00:39
 -->
 <template>
     <div class="demo-image__placeholder">
         <div class="block">
             <div>
                 <el-row :gutter="10">
-                    <el-col :sm="12" :md="12" :lg="12" :xl="12">
+                    <el-col :sm="8" :md="8" :lg="8" :xl="8">
                         <div class="grid-content bg-purple">
                             <el-image :src="src">
                                 <div slot="placeholder" class="image-slot">
@@ -20,7 +20,7 @@
                             </el-image>
                         </div>
                     </el-col>
-                    <el-col :sm="12" :md="12" :lg="12" :xl="12">
+                    <el-col :sm="16" :md="16" :lg="16" :xl="16">
                         <div class="grid-content bg-purple-light">
                             <div class="data-view">
                                 <el-card>
@@ -149,21 +149,17 @@ export default {
     created() {
         // 压力图表的绘制
         dataView().then(res => {
-            if (res.data.code === 200) {
-                let result = 20
-                this.draw(result)
-            }
+            let result = 20
+            this.draw(result)
         }).catch(err => {
             throw err
         })
 
         // 玫瑰花图表的绘制
         dataView2().then(res => {
-            if (res.data.code === 200) {
-                // let result = res.data.data.series
-                let result = 20
-                this.draw2(result)
-            }
+            // let result = res.data.data.series
+            let result = 20
+            this.draw2(result)
         }).catch(err => {
             throw err
         })
@@ -236,7 +232,7 @@ export default {
                     {
                         name: '数量',
                         type: 'pie',
-                        radius: [70, 140],
+                        radius: [70, 170],
                         center: ['50%', '50%'],
                         roseType: 'area',
                         itemStyle: {
@@ -250,12 +246,12 @@ export default {
                 ]
             }
 
-            result.forEach((item) => {
-                option.series[0].data.push({
-                    name: item.name,
-                    value: item.value
-                })
-            })
+            // result.forEach((item) => {
+            //     option.series[0].data.push({
+            //         name: item.name,
+            //         value: item.value
+            //     })
+            // })
             myChart2.setOption(option)
         }
     }

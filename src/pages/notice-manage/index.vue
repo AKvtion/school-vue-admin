@@ -9,7 +9,7 @@
 <template>
     <div>
         <router-view></router-view>
-        <h1>通知管理index</h1>
+        <h1 style="text-align: center;">暂无通知</h1>
     </div>
 </template>
 

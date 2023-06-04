@@ -4,7 +4,7 @@
  * @Author: https://github.com/akvtion && ifauchard@163.com
  * @Date: 2023-05-25 15:26:52
  * @LastEditors: https://github.com/akvtion && ifauchard@163.com
- * @LastEditTime: 2023-05-25 18:16:48
+ * @LastEditTime: 2023-05-30 08:56:09
  */
 import axios from '@/config/httpConfig'
 
@@ -15,7 +15,7 @@ export function getClassList() {
 
 // 新增班级
 export function addClassList(data) {
-    return axios.post('/class', data)
+    return axios.post('/class/add', data)
 }
 
 // 修改班级

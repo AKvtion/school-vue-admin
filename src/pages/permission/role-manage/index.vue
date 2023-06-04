@@ -22,10 +22,10 @@
                 <el-table-column prop="description" label="角色名" width="120">
                 </el-table-column>
                 <!-- <el-table-column
-          prop="roleName"
-          label="角色名"
-          width="120">
-        </el-table-column> -->
+                prop="roleName"
+                label="角色名"
+                width="120">
+                </el-table-column> -->
                     <el-table-column prop="pmsDescribe" label="操作权限">
                 </el-table-column>
                 <!-- <el-table-column label="操作权限" prop="erpMemberPermissions"

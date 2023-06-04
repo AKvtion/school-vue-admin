@@ -1,7 +1,7 @@
 
 <template lang="html">
 <el-card class="box-card">
-  <div>
+<div>
     <div style="margin-bottom:10px;">
       <el-button type="success" icon="el-icon-plus" size="small" @click="handleNewCategory(1,0)">新增菜单</el-button>
     </div>
@@ -95,7 +95,7 @@
 </template>
 
 <script>
-import { getFirstLevel, getNextLevel } from '@/api/permission'
+// import { getFirstLevel, getNextLevel } from '@/api/permission'
 export default {
     name: 'coolefyCategory',
     data() {

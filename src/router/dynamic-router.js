@@ -26,7 +26,7 @@ const GoodsClassify = () => import('@/pages/goods-manage/goods-classify')
 const Permission = () => import('@/pages/permission')
 const UserManage = () => import('@/pages/permission/user-manage')
 const RoleManage = () => import('@/pages/permission/role-manage')
-const MenuManage = () => import('@/pages/permission/menu-manage')
+// const MenuManage = () => import('@/pages/permission/menu-manage')
 /* 需要权限判断的路由 */
 const dynamicRoutes = [
     {
@@ -200,16 +200,16 @@ const dynamicRoutes = [
                     name: '角色管理',
                     icon: 'eye'
                 }
-            },
-            {
-                path: 'menu',
-                name: 'menu.manage',
-                component: MenuManage,
-                meta: {
-                    name: '菜单管理',
-                    icon: 'tree'
-                }
             }
+            // {
+            //     path: 'menu',
+            //     name: 'menu.manage',
+            //     component: MenuManage,
+            //     meta: {
+            //         name: '菜单管理',
+            //         icon: 'tree'
+            //     }
+            // }
         ]
     }
 ]
